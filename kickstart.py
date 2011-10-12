@@ -2,10 +2,15 @@
 import os, sys, shutil, re, yaml
 from optparse import OptionParser
 
+import kickstart
+
 parser = OptionParser()
 parser.add_option("-t", "--template", dest="template", help="base project template", default="base")
 parser.add_option("-c", "--config", dest="config", help="yaml file to provide setup variables", default="config.yaml")
 (options, args) = parser.parse_args()
+
+template_dir = os.path.join(kickstart.__path__[0], options.template)
+print template_dir
 
 config = {}
 config['project'] = re.sub('\-', '_', args[0])
@@ -19,10 +24,10 @@ def replace_variable(match):
 
 def create_project(name, template):
     def copy_template():
-        config_prompt(options.template, options.config)
+        config_prompt(template, options.config)
         shutil.copytree(template, name)
-        shutil.copytree('%s/%s' % (name, template), '%s/%s' % (name, config['project'])) 
-        shutil.rmtree('%s/%s' % (name, template))
+        shutil.copytree('%s/%s' % (name, options.template), '%s/%s' % (name, config['project'])) 
+        shutil.rmtree('%s/%s' % (name, options.template))
         os.remove('%s/%s' % (name, options.config))
 
         for dirname, dirnames, files in os.walk(name):
@@ -61,4 +66,4 @@ def config_prompt(template, config_file):
         config[option.lower()] = value if value != '' else default
 
 
-create_project(args[0], options.template)
+create_project(args[0], template_dir)
