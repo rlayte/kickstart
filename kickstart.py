@@ -5,45 +5,53 @@ from optparse import OptionParser
 import kickstarter
 
 parser = OptionParser()
-parser.add_option("-t", "--template", dest="template", help="base project template", default="base")
+parser.add_option("-t", "--template", dest="template", help="default project template", default="default")
+parser.add_option("-a", "--add-template", dest="add", help="install new template")
+parser.add_option("-d", "--remove-template", dest="remove", help="remove a template")
 (options, args) = parser.parse_args()
 
 template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.template)
 
-config = {}
-config['project'] = re.sub('\-', '_', args[0])
-config['project_module'] = re.sub('\-', '_', args[0])
-config['project_name'] = args[0]
-config['project_root'] = '%s/%s' % (os.getcwd(), args[0])
+
+def create_template():
+    templates_dir = os.path.join(kickstarter.__path__[0], 'templates')
+    shutil.copytree(options.add, '%s/%s' % (templates_dir, options.add))
 
 
-def create_template(name, template):
-    pass
+def remove_template():
+    templates_dir = os.path.join(kickstarter.__path__[0], 'templates')
+    shutil.rmtree('%s/%s' % (templates_dir, options.remove))
 
 
 def create_project(name, template):
+    config = {}
+    config['project'] = re.sub('\-', '_', args[0])
+    config['project_module'] = re.sub('\-', '_', args[0])
+    config['project_name'] = args[0]
+    config['project_root'] = '%s/%s' % (os.getcwd(), args[0])
 
     def replace_variable(match):
         key = match.groups(1)[0].lower()
         return config[key]
 
     def config_prompt(template):
-        c = open('%s/%s' % (template, 'config.yaml'), 'r')
-        parsed_conf = re.sub('{{\s*(\w+)\s*}}', args[0], c.read())
-        c.close()
+        if os.path.exists('%s/%s' % (template, 'config.yaml')):
+            c = open('%s/%s' % (template, 'config.yaml'), 'r')
+            parsed_conf = re.sub('{{\s*(\w+)\s*}}', args[0], c.read())
+            c.close()
 
-        conf = yaml.load(parsed_conf)
-        for option in conf:
-            default = conf[option]
-            value = str(raw_input('%s (leave blank for %s): ' % (option, default)))
-            config[option.lower()] = value if value != '' else default
+            conf = yaml.load(parsed_conf)
+            for option in conf:
+                default = conf[option]
+                value = str(raw_input('%s (leave blank for %s): ' % (option, default)))
+                config[option.lower()] = value if value != '' else default
 
     def copy_template():
         config_prompt(template)
         shutil.copytree(template, name)
         shutil.copytree('%s/%s' % (name, options.template), '%s/%s' % (name, config['project'])) 
         shutil.rmtree('%s/%s' % (name, options.template))
-        os.remove('%s/%s' % (name, options.config))
+        os.remove('%s/%s' % (name, 'config.yaml'))
 
         for dirname, dirnames, files in os.walk(name):
             for filename in files:
@@ -69,5 +77,9 @@ def create_project(name, template):
     else:
         copy_template()
 
-
-create_project(args[0], template_dir)
+if options.add:
+    create_template()
+if options.remove:
+    remove_template()
+else:
+    create_project(args[0], template_dir)
