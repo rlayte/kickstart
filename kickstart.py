@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 import os, sys, shutil, re, yaml
 from optparse import OptionParser
-
 import kickstarter
 
 parser = OptionParser()
@@ -9,7 +8,7 @@ parser.add_option("-t", "--template", dest="template", help="default project tem
 parser.add_option("-a", "--add-template", dest="add", help="install new template")
 parser.add_option("-r", "--remove-template", dest="remove", help="remove a template")
 parser.add_option("-d", "--default", dest="default_template", help="set default template")
-parser.add_option("-l", "--list", help="list all installed templates")
+parser.add_option("-l", "--list", action="store_true", dest="list_templates", help="list all installed templates")
 (options, args) = parser.parse_args()
 
 template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.template)
@@ -18,7 +17,20 @@ template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.templa
 def list_templates():
     templates_dir = os.path.join(kickstarter.__path__[0], 'templates')
     for template in os.listdir(templates_dir):
-        print template
+        if template != 'default':
+            if os.path.exists('%s/%s/config.yaml' % (templates_dir, template)):
+                c = open('%s/%s/config.yaml' % (templates_dir, template), 'r')
+                conf = yaml.load(c.read())
+                c.close()
+
+                try:
+                    description = ': %s' % conf['description']
+                except KeyError:
+                    description = ''
+            else:
+                description = ''
+
+            print '%s%s' % (template, description)
 
 
 def set_default():
@@ -57,21 +69,25 @@ def create_project(name, template):
             c.close()
 
             conf = yaml.load(parsed_conf)
-            for option in conf:
-                default = conf[option]
+            for option in conf['config']:
+                default = conf['config'][option]
                 value = str(raw_input('%s (leave blank for %s): ' % (option, default)))
                 config[option.lower()] = value if value != '' else default
 
     def copy_template():
         config_prompt(template)
         shutil.copytree(template, name)
-        shutil.copytree('%s/%s' % (name, options.template), '%s/%s' % (name, config['project'])) 
-        shutil.rmtree('%s/%s' % (name, options.template))
 
         if os.path.exists('%s/%s' % (name, 'config.yaml')):
             os.remove('%s/%s' % (name, 'config.yaml'))
 
         for dirname, dirnames, files in os.walk(name):
+            for d in dirnames:
+                if d == options.template:
+                    print "%s/%s" % (dirname, d)
+                    shutil.copytree('%s/%s' % (dirname, d), '%s/%s' % (dirname, name))
+                    shutil.rmtree('%s/%s' % (dirname, d))
+
             for filename in files:
                 f = open('%s/%s' % (dirname, filename), 'r')
                 lines = f.readlines()
@@ -95,7 +111,10 @@ def create_project(name, template):
     else:
         copy_template()
 
-if options.add:
+
+if options.list_templates:
+    list_templates()
+elif options.add:
     create_template()
 elif options.remove:
     remove_template()
