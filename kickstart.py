@@ -84,7 +84,6 @@ def create_project(name, template):
         for dirname, dirnames, files in os.walk(name):
             for d in dirnames:
                 if d == options.template:
-                    print "%s/%s" % (dirname, d)
                     shutil.copytree('%s/%s' % (dirname, d), '%s/%s' % (dirname, name))
                     shutil.rmtree('%s/%s' % (dirname, d))
 
