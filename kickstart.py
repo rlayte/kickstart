@@ -87,6 +87,7 @@ def create_project(name, template):
                     shutil.copytree('%s/%s' % (dirname, d), '%s/%s' % (dirname, name))
                     shutil.rmtree('%s/%s' % (dirname, d))
 
+        for dirname, dirnames, files in os.walk(name):
             for filename in files:
                 f = open('%s/%s' % (dirname, filename), 'r')
                 lines = f.readlines()
