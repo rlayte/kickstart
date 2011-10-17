@@ -1,5 +1,5 @@
 #! /usr/bin/env python
 
-from __project_name__ import app
+from __config_project_module__ import app
 
 app.run()

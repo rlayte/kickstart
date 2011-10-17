@@ -14,7 +14,8 @@ print template_dir
 
 config = {}
 config['project'] = re.sub('\-', '_', args[0])
-config['__project_name__'] = re.sub('\-', '_', args[0])
+config['project_module'] = re.sub('\-', '_', args[0])
+config['project_name'] = args[0]
 config['project_root'] = '%s/%s' % (os.getcwd(), args[0])
 
 
@@ -37,7 +38,8 @@ def create_project(name, template):
                 lines = f.readlines()
                 f.close()
 
-                new_lines = [re.sub('{{\s*(\w+)\s*}}', replace_variable, line) for line in lines]
+                first_pass = [re.sub('{{\s*(\w+)\s*}}', replace_variable, line) for line in lines]
+                new_lines = [re.sub('__config_(\w+)__', replace_variable, line) for line in first_pass]
 
                 f = open('%s/%s' % (dirname, filename), 'w')
                 f.write(''.join(new_lines))

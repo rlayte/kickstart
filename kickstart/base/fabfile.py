@@ -6,8 +6,8 @@ def symlink(file_name, link):
 
 
 def nginx():
-    symlink('{{ PROJECT_ROOT }}/server/local/nginx.conf', '/etc/nginx/sites-available/{{ PROJECT }}.conf')
-    symlink('/etc/nginx/sites-available/{{ PROJECT }}.conf', '/etc/nginx/sites-enabled/{{ PROJECT }}.conf')
+    symlink('{{ PROJECT_ROOT }}/server/local/nginx.conf', '/etc/nginx/sites-available/{{ PROJECT_MODULE }}.conf')
+    symlink('/etc/nginx/sites-available/{{ PROJECT_MODULE }}.conf', '/etc/nginx/sites-enabled/{{ PROJECT_MODULE }}.conf')
     local('sudo /etc/init.d/nginx restart')
 
 
@@ -23,5 +23,5 @@ def install(env):
     install_requirements()
     install_environment()
     local('sudo chmod 755 run.py')
-    local('export FLASK_SETTINGS={{ PROJECT_ROOT }}/{{ PROJECT }}/conf/%s/settings.py' % env)
+    local('export FLASK_SETTINGS={{ PROJECT_ROOT }}/{{ PROJECT_MODULE }}/conf/%s/settings.py' % env)
     nginx()

@@ -1,1 +1,1 @@
-# {{ PROJECT }}
+# {{ PROJECT_NAME }}
