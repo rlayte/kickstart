@@ -2,14 +2,13 @@
 import os, sys, shutil, re, yaml
 from optparse import OptionParser
 
-import kickstart
+import kickstarter
 
 parser = OptionParser()
 parser.add_option("-t", "--template", dest="template", help="base project template", default="base")
-parser.add_option("-c", "--config", dest="config", help="yaml file to provide setup variables", default="config.yaml")
 (options, args) = parser.parse_args()
 
-template_dir = os.path.join(kickstart.__path__[0], options.template)
+template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.template)
 
 config = {}
 config['project'] = re.sub('\-', '_', args[0])
@@ -18,14 +17,29 @@ config['project_name'] = args[0]
 config['project_root'] = '%s/%s' % (os.getcwd(), args[0])
 
 
-def replace_variable(match):
-    key = match.groups(1)[0].lower()
-    return config[key]
+def create_template(name, template):
+    pass
 
 
 def create_project(name, template):
+
+    def replace_variable(match):
+        key = match.groups(1)[0].lower()
+        return config[key]
+
+    def config_prompt(template):
+        c = open('%s/%s' % (template, 'config.yaml'), 'r')
+        parsed_conf = re.sub('{{\s*(\w+)\s*}}', args[0], c.read())
+        c.close()
+
+        conf = yaml.load(parsed_conf)
+        for option in conf:
+            default = conf[option]
+            value = str(raw_input('%s (leave blank for %s): ' % (option, default)))
+            config[option.lower()] = value if value != '' else default
+
     def copy_template():
-        config_prompt(template, options.config)
+        config_prompt(template)
         shutil.copytree(template, name)
         shutil.copytree('%s/%s' % (name, options.template), '%s/%s' % (name, config['project'])) 
         shutil.rmtree('%s/%s' % (name, options.template))
@@ -54,18 +68,6 @@ def create_project(name, template):
             print 'Aborting'
     else:
         copy_template()
-
-
-def config_prompt(template, config_file):
-    c = open('%s/%s' % (template, config_file), 'r')
-    parsed_conf = re.sub('{{\s*(\w+)\s*}}', args[0], c.read())
-    c.close()
-
-    conf = yaml.load(parsed_conf)
-    for option in conf:
-        default = conf[option]
-        value = str(raw_input('%s (leave blank for %s): ' % (option, default)))
-        config[option.lower()] = value if value != '' else default
 
 
 create_project(args[0], template_dir)
