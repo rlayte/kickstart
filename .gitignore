@@ -4,3 +4,4 @@ MANIFEST
 *.pyc
 *.swp
 .DS_Store
+kickstart.egg-info
