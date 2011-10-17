@@ -1,5 +1,5 @@
 #! /usr/bin/env python
 
-from {{ PROJECT }} import app
+from __project_name__ import app
 
 app.run()

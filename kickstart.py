@@ -14,6 +14,7 @@ print template_dir
 
 config = {}
 config['project'] = re.sub('\-', '_', args[0])
+config['__project_name__'] = re.sub('\-', '_', args[0])
 config['project_root'] = '%s/%s' % (os.getcwd(), args[0])
 
 
