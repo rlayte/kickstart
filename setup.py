@@ -7,7 +7,7 @@ setup(
     scripts = ['kickstart.py'],
     install_requires = ['PyYAML'],
     url = 'http://pypi.python.org/pypi/kickstart',
-    version = '0.282',
+    version = '0.286',
     description = 'Framework agnostic setup script',
     author = 'Richard Layte',
     author_email = 'rich.layte@gmail.com'

@@ -9,9 +9,16 @@ parser.add_option("-t", "--template", dest="template", help="default project tem
 parser.add_option("-a", "--add-template", dest="add", help="install new template")
 parser.add_option("-r", "--remove-template", dest="remove", help="remove a template")
 parser.add_option("-d", "--default", dest="default_template", help="set default template")
+parser.add_option("-l", "--list", help="list all installed templates")
 (options, args) = parser.parse_args()
 
 template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.template)
+
+
+def list_templates():
+    templates_dir = os.path.join(kickstarter.__path__[0], 'templates')
+    for template in os.listdir(templates_dir):
+        print template
 
 
 def set_default():

@@ -1,0 +1,25 @@
+## Install
+    
+    $ pip install kickstart
+
+## Create a new project
+
+    $ kickstart.py hello-world
+
+(Uses Flask template by default)
+
+## Add a new template
+
+    $ kickstart.py --add-template <path/to/django/template>
+
+## Use a specific template
+
+    $ kickstart.py hello-world -t django
+
+## Change the default template
+
+    $ kickstart.py --default django
+
+## Remove an installed template
+
+    $ kickstart.py --remove-templatae django
