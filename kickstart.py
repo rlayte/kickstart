@@ -10,7 +10,6 @@ parser.add_option("-c", "--config", dest="config", help="yaml file to provide se
 (options, args) = parser.parse_args()
 
 template_dir = os.path.join(kickstart.__path__[0], options.template)
-print template_dir
 
 config = {}
 config['project'] = re.sub('\-', '_', args[0])
