@@ -7,10 +7,19 @@ import kickstarter
 parser = OptionParser()
 parser.add_option("-t", "--template", dest="template", help="default project template", default="default")
 parser.add_option("-a", "--add-template", dest="add", help="install new template")
-parser.add_option("-d", "--remove-template", dest="remove", help="remove a template")
+parser.add_option("-r", "--remove-template", dest="remove", help="remove a template")
+parser.add_option("-d", "--default", dest="default_template", help="set default template")
 (options, args) = parser.parse_args()
 
 template_dir = os.path.join(kickstarter.__path__[0], 'templates', options.template)
+
+
+def set_default():
+    templates_dir = os.path.join(kickstarter.__path__[0], 'templates')
+    shutil.rmtree('%s/default' % templates_dir)
+    shutil.copytree('%s/%s' % (templates_dir, options.default_template), '%s/%s' % (templates_dir, 'default'))
+    shutil.copytree('%s/default/%s' % (templates_dir, options.default_template), '%s/default/default' % templates_dir)
+    shutil.rmtree('%s/default/%s' % (templates_dir, options.default_template))
 
 
 def create_template():
@@ -51,7 +60,9 @@ def create_project(name, template):
         shutil.copytree(template, name)
         shutil.copytree('%s/%s' % (name, options.template), '%s/%s' % (name, config['project'])) 
         shutil.rmtree('%s/%s' % (name, options.template))
-        os.remove('%s/%s' % (name, 'config.yaml'))
+
+        if os.path.exists('%s/%s' % (name, 'config.yaml')):
+            os.remove('%s/%s' % (name, 'config.yaml'))
 
         for dirname, dirnames, files in os.walk(name):
             for filename in files:
@@ -79,7 +90,9 @@ def create_project(name, template):
 
 if options.add:
     create_template()
-if options.remove:
+elif options.remove:
     remove_template()
+elif options.default_template:
+    set_default()
 else:
     create_project(args[0], template_dir)
