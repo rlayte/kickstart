@@ -5,8 +5,8 @@ import kickstarter
 
 parser = OptionParser()
 parser.add_option("-t", "--template", dest="template", help="default project template", default="default")
-parser.add_option("-a", "--add-template", dest="add", help="install new template")
-parser.add_option("-r", "--remove-template", dest="remove", help="remove a template")
+parser.add_option("-a", "--add", dest="add", help="install new template")
+parser.add_option("-r", "--remove", dest="remove", help="remove a template")
 parser.add_option("-d", "--default", dest="default_template", help="set default template")
 parser.add_option("-l", "--list", action="store_true", dest="list_templates", help="list all installed templates")
 (options, args) = parser.parse_args()
