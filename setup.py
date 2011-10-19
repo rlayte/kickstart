@@ -9,7 +9,7 @@ setup(
     scripts = ['kickstart.py'],
     install_requires = ['PyYAML'],
     url = 'https://github.com/rlayte/kickstart',
-    version = '0.291',
+    version = '0.292',
     author = 'Richard Layte',
     author_email = 'rich.layte@gmail.com'
 )
