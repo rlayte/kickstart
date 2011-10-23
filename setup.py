@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 
+
 setup(
     name = 'kickstart',
     description = 'Framework agnostic setup script',
@@ -9,7 +10,7 @@ setup(
     scripts = ['kickstart.py'],
     install_requires = ['PyYAML'],
     url = 'https://github.com/rlayte/kickstart',
-    version = '0.292',
+    version = '0.293',
     author = 'Richard Layte',
     author_email = 'rich.layte@gmail.com'
 )
