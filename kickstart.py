@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python -B
 import os, sys, shutil, re, yaml
 from optparse import OptionParser
 import kickstarter
